@@ -11,8 +11,8 @@ reddit = praw.Reddit(client_id = config.client_id,
 
 def index():
     posts_list  = []
-    for submission in reddit.front.hot(limit = 20):
-        posts_list.append(submission.title)
+    for submission in reddit.front.hot(limit = 30):
+        posts_list.append(submission)
     return render_template("layout.html", posts=posts_list)
 
 
