@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Website</title>
+    <title>Quiet Reddit</title>
 <style>
 
       html, body { background: #F0F0F0; }
@@ -55,7 +55,10 @@
 
   <ol class="posts">
     {% for post in posts %}
-      <li>{{ post.title }} </li>
+      <li>
+        <a href = {{ post.url }}>{{ post.title }}</a>
+        <span>({{ post.subreddit_name_prefixed }})</span>
+      </li>
     {% endfor %}
   </ol>
 
