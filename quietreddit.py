@@ -1,31 +1,36 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,session
 import praw, config, pprint
 
 app = Flask(__name__)
-
-reddit = praw.Reddit(client_id = config.client_id,
-                client_secret = config.client_secret,
-                redirect_uri=config.redirect_uri+'/authorize',
-                user_agent = config.user_agent)
-
-auth_link = reddit.auth.url(['identity','read'],'...','permanent')
+app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
+    auth_link = reddit.auth.url(['identity','read'],'...','permanent')
+    
     posts = []
     for submission in reddit.front.hot(limit = 30):
         posts.append(submission)
+
     return render_template("layout.html", link=auth_link, posts=posts)
 
 @app.route("/authorize")
 def authorize():
-    state = request.args.get('state', '')
     code = request.args.get('code', '')
-    print(state)
-    print(code)
-    print(reddit.auth.authorize(code))
-    print(reddit.user.me())
+    reddit.auth.authorize(code)
+    session['username'] = str(reddit.user.me())
+    session['authd'] = True
+    return redirect("/")
+
+@app.route("/logout")
+def logout():
+    reddit.read_only = True
+    session.clear()
     return redirect("/")
 
 if __name__ == "__main__":
+    reddit = praw.Reddit(client_id = config.client_id,
+                    client_secret = config.client_secret,
+                    redirect_uri=config.redirect_uri+'/authorize',
+                    user_agent = config.user_agent)
     app.run()

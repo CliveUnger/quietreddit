@@ -52,8 +52,13 @@
 </head>
 <body>
   <h1>Quiet Reddit</h1>
-  <h2 class="user">User: {{user}}</h2>
-  <a class="link" href={{link}}>Login</a>
+
+  {% if not session.authd %}
+    <a class="link" href={{link}}>login</a>
+  {% else %}
+    <span>user: {{ session.username }}</span>
+    <a href={{ url_for('logout') }} >logout</a>
+  {% endif %}
   <br><br>
   <ol class="posts">
     {% for post in posts %}
@@ -64,6 +69,10 @@
     {% endfor %}
   </ol>
 
+  <div class="links">
+    <a href="">What is this?</a>
+    <a href="https://github.com/CliveUnger/quietreddit">Code</a>
+  </div>
 
 </body>
 </html>
