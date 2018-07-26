@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for,session
-import praw, config, pprint
+from flask import Flask, render_template, request, redirect, session
+from flask_sslify import SSLify
+import praw, config
 
 app = Flask(__name__)
+sslify = SSLify(app)
+
 app.secret_key = config.secret_key
 
 reddit = praw.Reddit(client_id = config.client_id,
@@ -14,7 +17,7 @@ def index():
     auth_link = reddit.auth.url(['identity','read'],'...','permanent')
 
     posts = []
-    for submission in reddit.front.hot(limit = 30):
+    for submission in reddit.front.hot(limit = 50):
         posts.append(submission)
 
     return render_template("layout.html", link=auth_link, posts=posts)
